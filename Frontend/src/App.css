@@ -10,3 +10,7 @@
   flex-direction: column;
   gap: 20px;
 }
+
+.muted {
+  color: #6b7280;
+}

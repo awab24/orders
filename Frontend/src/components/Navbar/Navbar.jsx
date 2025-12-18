@@ -3,9 +3,19 @@ import { Link, NavLink } from "react-router-dom";
 import "./Navbar.css";
 import { assets } from "../../assets/assets";
 import { useCart } from "../../context/CartContext";
+import { useAuth } from "../../context/AuthContext";
 
 const Navbar = () => {
   const { items } = useCart();
+  const { user, signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+    } catch (_err) {
+      // Non-blocking; auth state listener will handle UI updates.
+    }
+  };
 
   return (
     <div className="navbar">
@@ -23,7 +33,18 @@ const Navbar = () => {
           <img src={assets.basket_icon} alt="basket" />
           {items.length > 0 && <div className="dot">{items.length}</div>}
         </Link>
-        <button type="button">Sign in</button>
+        {user ? (
+          <div className="navbar-user">
+            <span className="user-email">{user.email}</span>
+            <button type="button" onClick={handleSignOut}>
+              Sign out
+            </button>
+          </div>
+        ) : (
+          <Link to="/auth" className="auth-link">
+            Sign in
+          </Link>
+        )}
       </div>
     </div>
   );

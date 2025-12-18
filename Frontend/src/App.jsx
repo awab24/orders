@@ -5,8 +5,8 @@ import Navbar from "./components/Navbar/Navbar";
 import Home from "./pages/Home/Home";
 import Cart from "./pages/Cart/Cart";
 import PlaceOrder from "./pages/PlaceOrder/PlaceOrder";
-
- // Fixed path - no extra folder
+import Auth from "./pages/Auth/Auth";
+import RequireAuth from "./components/RequireAuth";
 
 function App() {
   return (
@@ -16,7 +16,15 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/cart" element={<Cart />} />
-        <Route path="/order" element={<PlaceOrder />} />
+        <Route
+          path="/order"
+          element={
+            <RequireAuth>
+              <PlaceOrder />
+            </RequireAuth>
+          }
+        />
+        <Route path="/auth" element={<Auth />} />
       </Routes>
     </div>
   );

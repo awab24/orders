@@ -14,6 +14,23 @@ app.use(morgan("dev"));
 
 const PORT = process.env.PORT || 4000;
 
+const requireAuth = async (req, res, next) => {
+  const header = req.headers.authorization || "";
+  const token = header.startsWith("Bearer ") ? header.slice(7) : null;
+
+  if (!token) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  const { data, error } = await supabase.auth.getUser(token);
+  if (error || !data?.user) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  req.user = data.user;
+  return next();
+};
+
 app.get("/health", (_req, res) => {
   res.json({ status: "ok" });
 });
@@ -59,7 +76,7 @@ app.patch("/api/orders/:orderId/status", async (req, res) => {
   res.json(data);
 });
 
-app.post("/api/orders", async (req, res) => {
+app.post("/api/orders", requireAuth, async (req, res) => {
   const { customer, customer_id, items, payment_method = "cash", status = "pending" } = req.body;
 
   if (!items?.length) {
@@ -126,7 +143,7 @@ app.get("/api/reservations", async (_req, res) => {
   res.json(data);
 });
 
-app.post("/api/reservations", async (req, res) => {
+app.post("/api/reservations", requireAuth, async (req, res) => {
   const { customer, customer_id, reservation_date, party_size, status = "reserved" } = req.body;
 
   if (!reservation_date || !party_size) {

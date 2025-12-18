@@ -1,14 +1,25 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import "./PlaceOrder.css";
 import { useCart } from "../../context/CartContext";
+import { useAuth } from "../../context/AuthContext";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
 const PlaceOrder = () => {
   const { items, total, clearCart } = useCart();
+  const { session, user } = useAuth();
   const [customer, setCustomer] = useState({ name: "", email: "", phone: "" });
   const [reservation, setReservation] = useState({ reservation_date: "", party_size: "" });
   const [status, setStatus] = useState({ loading: false, message: "", error: "" });
+
+  useEffect(() => {
+    if (!user) return;
+    setCustomer((prev) => ({
+      ...prev,
+      name: prev.name || user.user_metadata?.name || "",
+      email: prev.email || user.email || ""
+    }));
+  }, [user]);
 
   const orderItems = useMemo(
     () => items.map((i) => ({ item_id: i.item_id, quantity: i.quantity })),
@@ -17,6 +28,11 @@ const PlaceOrder = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!session?.access_token) {
+      setStatus({ loading: false, message: "", error: "Please sign in to place an order." });
+      return;
+    }
+
     if (!orderItems.length) {
       setStatus({ loading: false, message: "", error: "Add at least one item to order." });
       return;
@@ -24,9 +40,14 @@ const PlaceOrder = () => {
 
     setStatus({ loading: true, message: "", error: "" });
     try {
+      const authHeaders = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session.access_token}`
+      };
+
       const orderRes = await fetch(`${API_URL}/api/orders`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: authHeaders,
         body: JSON.stringify({
           customer,
           items: orderItems,
@@ -40,7 +61,7 @@ const PlaceOrder = () => {
       if (reservation.reservation_date && reservation.party_size) {
         await fetch(`${API_URL}/api/reservations`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: authHeaders,
           body: JSON.stringify({
             customer,
             reservation_date: reservation.reservation_date,
@@ -112,7 +133,7 @@ const PlaceOrder = () => {
         <section className="summary">
           <h3>Summary</h3>
           <p>Items: {items.length}</p>
-          <p className="total">Total: â‚º{total.toFixed(2)}</p>
+          <p className="total">Total: ƒ'§{total.toFixed(2)}</p>
           <button type="submit" disabled={status.loading}>
             {status.loading ? "Processing..." : "Place order"}
           </button>
