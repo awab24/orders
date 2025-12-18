@@ -19,7 +19,7 @@ const Home = () => {
     <div className="page home">
       <Header/>
       <ExploreMenu category={category} setCategory={setCategory}/>
-      <div ref={resultsRef}>
+      <div id="menu-results" ref={resultsRef}>
         <FoodList category={category} searchTerm={searchTerm}/>
       </div>
 

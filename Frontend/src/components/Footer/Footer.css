@@ -1,0 +1,33 @@
+.footer {
+  margin-top: 40px;
+  padding: 28px 24px 20px;
+  border-top: 1px solid #e5e7eb;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.footer-top {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 18px;
+}
+
+.footer h3 {
+  color: #1f2a44;
+  margin-bottom: 8px;
+}
+
+.footer p {
+  color: #6b7280;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.footer-bottom {
+  border-top: 1px solid #f1f1f1;
+  padding-top: 12px;
+  font-size: 13px;
+  color: #9ca3af;
+}
