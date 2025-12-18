@@ -26,7 +26,7 @@ width: 150px;
 .navbar-right{
     display: flex;
     align-items: center;
-    gap: 40px;
+    gap: 24px;
 }
 .navbar button{
     background: transparent ;
@@ -92,4 +92,45 @@ width: 150px;
 
 .auth-link:hover {
     background-color: #fff4f2;
+}
+
+.navbar-search {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.navbar-search input {
+    width: 220px;
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 14px;
+    font-size: 14px;
+}
+
+.icon-btn {
+    border: none;
+    background: transparent;
+    padding: 0;
+    cursor: pointer;
+}
+
+@media (max-width: 900px) {
+    .navbar-right {
+        gap: 14px;
+    }
+
+    .navbar-search input {
+        width: 160px;
+    }
+
+    .user-email {
+        display: none;
+    }
+}
+
+@media (max-width: 640px) {
+    .navbar-search input {
+        width: 120px;
+    }
 }

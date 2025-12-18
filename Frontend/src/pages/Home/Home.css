@@ -3,16 +3,3 @@
   flex-direction: column;
   gap: 24px;
 }
-
-.search-bar {
-  display: flex;
-  justify-content: flex-start;
-}
-
-.search-bar input {
-  width: min(520px, 100%);
-  padding: 12px 14px;
-  border: 1px solid #d1d5db;
-  border-radius: 14px;
-  font-size: 15px;
-}
