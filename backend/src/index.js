@@ -180,47 +180,24 @@ async function getOrCreateCustomer(customerId, customerPayload) {
     throw new Error("customer email is required when customer_id is not provided");
   }
 
-  // Try to find existing customer by email.
-  const { data: existing, error: existingError } = await supabase
-    .from("customers")
-    .select("customer_id")
-    .eq("email", customerPayload.email)
-    .maybeSingle();
+  const { data, error } = await supabase.rpc("get_or_create_customer", {
+    p_email: customerPayload.email,
+    p_name: customerPayload.name || null,
+    p_phone: customerPayload.phone || null
+  });
 
-  if (existingError) throw existingError;
-  if (existing?.customer_id) return existing.customer_id;
-
-  const payloadBase = {
-    name: customerPayload.name || "Guest " + nanoid(6),
-    email: customerPayload.email,
-    phone: customerPayload.phone || null
-  };
-
-  // First attempt: rely on DB default (serial/identity/uuid)
-  const firstTry = await supabase.from("customers").insert(payloadBase).select().maybeSingle();
-  if (!firstTry.error && firstTry.data?.customer_id) {
-    return firstTry.data.customer_id;
-  }
-
-  // If DB complains about null customer_id, retry with generated ID (works when column lacks default)
-  if (firstTry.error && /customer_id/.test(firstTry.error.message || "")) {
-    const payloadWithId = { customer_id: generateNumericId(), ...payloadBase };
-    const { data, error } = await supabase.from("customers").insert(payloadWithId).select().single();
-    if (error) throw error;
-    return data.customer_id;
-  }
-
-  if (firstTry.error) throw firstTry.error;
-  throw new Error("Unable to create customer");
+  if (error) throw error;
+  if (!data) throw new Error("Unable to create customer");
+  return data;
 }
 
 async function calculateTotal(items) {
-  const ids = items.map((item) => item.item_id);
-  const { data, error } = await supabase.from("menu_items").select("item_id, price").in("item_id", ids);
+  const { data, error } = await supabase.rpc("calculate_items_total", {
+    p_items: items
+  });
   if (error) throw error;
 
-  const priceMap = new Map(data.map((item) => [item.item_id, Number(item.price)]));
-  return items.reduce((sum, item) => sum + (priceMap.get(item.item_id) || 0) * (item.quantity || 1), 0);
+  return Number(data || 0);
 }
 
 function generateNumericId() {
