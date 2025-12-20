@@ -8,8 +8,6 @@ import Cart from "./pages/Cart/Cart";
 import PlaceOrder from "./pages/PlaceOrder/PlaceOrder";
 import Auth from "./pages/Auth/Auth";
 import RequireAuth from "./components/RequireAuth";
-import RequireRole from "./components/RequireRole";
-import AdminOrders from "./pages/Admin/AdminOrders";
 
 function App() {
   return (
@@ -25,14 +23,6 @@ function App() {
             <RequireAuth>
               <PlaceOrder />
             </RequireAuth>
-          }
-        />
-        <Route
-          path="/admin/orders"
-          element={
-            <RequireRole allowed={["admin", "staff", "courier"]}>
-              <AdminOrders />
-            </RequireRole>
           }
         />
         <Route path="/auth" element={<Auth />} />

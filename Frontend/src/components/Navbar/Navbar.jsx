@@ -8,7 +8,7 @@ import { useSearch } from "../../context/SearchContext";
 
 const Navbar = () => {
   const { items } = useCart();
-  const { user, role, signOut } = useAuth();
+  const { user, signOut } = useAuth();
   const { searchTerm, setSearchTerm } = useSearch();
   const [searchOpen, setSearchOpen] = useState(false);
   const inputRef = useRef(null);
@@ -40,7 +40,6 @@ const Navbar = () => {
         <NavItem to="/" label="Home" />
         <NavItem to="/order" label="Order" />
         <NavItem to="/cart" label="Cart" />
-        {user && ["admin", "staff", "courier"].includes(role) && <NavItem to="/admin/orders" label="Admin" />}
       </ul>
       <div className="navbar-right">
         <div className={`navbar-search ${searchOpen ? "open" : ""}`}>
