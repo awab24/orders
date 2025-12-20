@@ -116,6 +116,17 @@ export const menu_list = [
         menu_image: menu_8
     }]
 
+export const category_images = {
+    Salad: menu_1,
+    Rolls: menu_2,
+    Deserts: menu_3,
+    Sandwich: menu_4,
+    Cake: menu_5,
+    "Pure Veg": menu_6,
+    Pasta: menu_7,
+    Noodles: menu_8
+}
+
 export const food_list = [
     {
         _id: "1",

@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import "./FoodList.css";
-import { assets, food_list } from "../../assets/assets";
+import { assets, category_images } from "../../assets/assets";
 import { useCart } from "../../context/CartContext";
 import { supabase } from "../../lib/supabaseClient";
 
@@ -61,11 +61,11 @@ const FoodList = ({ category, searchTerm = "" }) => {
     <div className="food-grid">
       {filtered.map((item) => (
         <article className="food-card" key={item.item_id}>
-          <img src={getImageForCategory(item.category)} alt={item.name} className="food-img" />
+          <img src={getImageForItem(item)} alt={item.name} className="food-img" />
           <div className="food-content">
             <div className="food-head">
               <h3>{item.name}</h3>
-              <span className="price">ƒ'§{Number(item.price).toFixed(2)}</span>
+              <span className="price">ï¿½'ï¿½{Number(item.price).toFixed(2)}</span>
             </div>
             <p className="description">{item.description}</p>
             <div className="food-meta">
@@ -81,9 +81,13 @@ const FoodList = ({ category, searchTerm = "" }) => {
   );
 };
 
-function getImageForCategory(category) {
-  const match = food_list.find((food) => food.category.toLowerCase() === category?.toLowerCase());
-  return match?.image || assets.parcel_icon;
+function getImageForItem(item) {
+  if (item?.image_url) return item.image_url;
+  const category = item?.category;
+  if (category) {
+    const matchKey = Object.keys(category_images).find((key) => key.toLowerCase() === category.toLowerCase());
+    if (matchKey) return category_images[matchKey];
+  }
+  return item.image_url || category_images[item.category] || assets.parcel_icon;
 }
-
 export default FoodList;
