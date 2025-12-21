@@ -65,7 +65,7 @@ const FoodList = ({ category, searchTerm = "" }) => {
           <div className="food-content">
             <div className="food-head">
               <h3>{item.name}</h3>
-              <span className="price">�'�{Number(item.price).toFixed(2)}</span>
+              <span className="price">${Number(item.price).toFixed(2)}</span>
             </div>
             <p className="description">{item.description}</p>
             <div className="food-meta">
@@ -88,6 +88,7 @@ function getImageForItem(item) {
     const matchKey = Object.keys(category_images).find((key) => key.toLowerCase() === category.toLowerCase());
     if (matchKey) return category_images[matchKey];
   }
+  //return assets.parcel_icon
   return item.image_url || category_images[item.category] || assets.parcel_icon;
 }
 export default FoodList;
