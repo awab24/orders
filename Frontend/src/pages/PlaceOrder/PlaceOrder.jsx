@@ -133,7 +133,7 @@ const PlaceOrder = () => {
         <section className="summary">
           <h3>Summary</h3>
           <p>Items: {items.length}</p>
-          <p className="total">Total: ƒ'§{total.toFixed(2)}</p>
+          <p className="total">Total: ${total.toFixed(2)}</p>
           <button type="submit" disabled={status.loading}>
             {status.loading ? "Processing..." : "Place order"}
           </button>
