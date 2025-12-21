@@ -1,0 +1,53 @@
+Queries report for restaurantapp (7 Q&A examples)
+
+Q1: List all menu items sorted by name.
+SQL:
+select *
+from public.menu_items
+order by name;
+
+Q2: List all customers sorted by name.
+SQL:
+select *
+from public.customers
+order by name;
+
+Q3: List staff members, newest hires first.
+SQL:
+select *
+from public.staff
+order by hired_at desc;
+
+Q4: Show all orders with their items and payments, newest orders first.
+SQL:
+select o.*,
+       oi.*,
+       p.*
+from public.orders o
+left join public.order_items oi on oi.order_id = o.order_id
+left join public.payments p on p.order_id = o.order_id
+order by o.order_date desc;
+
+Q5: Update an order status by id.
+SQL:
+update public.orders
+set status = 'completed'
+where order_id = 12345
+returning *;
+
+Q6: List reservations for a specific customer (by customer_id).
+SQL:
+select *
+from public.reservations
+where customer_id = 123
+order by reservation_date desc;
+
+Q7: Get reservations with customer contact info (used in the app).
+SQL:
+select r.*,
+       c.name,
+       c.email,
+       c.phone
+from public.reservations r
+join public.customers c on c.customer_id = r.customer_id
+order by r.reservation_date desc;

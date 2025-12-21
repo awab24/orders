@@ -1,0 +1,13 @@
+﻿Functions report for restaurantapp (Q&A examples)
+
+Q1: Create or get a customer by email.
+SQL:
+select public.get_or_create_customer('demo@example.com', 'Demo User', '123456');
+
+Q2: Calculate total price for a JSON list of items.
+SQL:
+select public.calculate_items_total('[{"item_id":1,"quantity":2}]'::jsonb);
+
+Q3: Calculate total amount for a specific order.
+SQL:
+select public.calculate_order_total(1);

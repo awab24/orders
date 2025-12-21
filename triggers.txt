@@ -1,0 +1,27 @@
+﻿Triggers report for restaurantapp (Q&A examples)
+
+Q1: Normalize a customer email to lowercase on update.
+SQL:
+update public.customers
+set email = upper(email)
+where customer_id = (select customer_id from public.customers limit 1)
+returning *;
+
+Q2: Recalculate an order total when order_items change.
+SQL:
+update public.order_items
+set quantity = quantity + 1
+where (order_id, item_id) in (
+  select order_id, item_id
+  from public.order_items
+  limit 1
+)
+returning *;
+
+Q3: Validate that payment amount matches the order total on insert.
+SQL:
+insert into public.payments (order_id, amount, payment_method)
+select order_id, total_amount, 'cash'
+from public.orders
+limit 1
+returning *;

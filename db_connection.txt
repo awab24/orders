@@ -1,0 +1,33 @@
+﻿Backend connection (Supabase service role or anon fallback)
+File: backend/src/supabaseClient.js
+
+import { createClient } from "@supabase/supabase-js";
+
+const { SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_ANON_KEY } = process.env;
+
+if (!SUPABASE_URL) {
+  throw new Error("SUPABASE_URL is required");
+}
+
+// Prefer service role for inserts/updates; fall back to anon if necessary.
+const supabaseKey = SUPABASE_SERVICE_ROLE_KEY || SUPABASE_ANON_KEY;
+
+if (!supabaseKey) {
+  throw new Error("SUPABASE_SERVICE_ROLE_KEY (or SUPABASE_ANON_KEY) is required");
+}
+
+export const supabase = createClient(SUPABASE_URL, supabaseKey);
+
+Frontend connection (Supabase anon key)
+File: Frontend/src/lib/supabaseClient.js
+
+import { createClient } from "@supabase/supabase-js";
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  console.warn("Supabase URL or Anon Key missing. Add them to your .env (VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY).");
+}
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);

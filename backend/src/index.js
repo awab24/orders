@@ -31,6 +31,24 @@ const requireAuth = async (req, res, next) => {
   return next();
 };
 
+const requireAdmin = async (req, res, next) => {
+  if (!req.user?.id) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  const { data, error } = await supabase
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", req.user.id)
+    .single();
+
+  if (error || data?.role !== "admin") {
+    return res.status(403).json({ error: "Forbidden" });
+  }
+
+  return next();
+};
+
 app.get("/health", (_req, res) => {
   res.json({ status: "ok" });
 });
@@ -74,6 +92,70 @@ app.patch("/api/orders/:orderId/status", async (req, res) => {
   const { data, error } = await supabase.from("orders").update({ status }).eq("order_id", orderId).select().single();
   if (error) return res.status(500).json({ error: error.message });
   res.json(data);
+});
+
+app.patch("/api/admin/orders/:orderId/status", requireAuth, requireAdmin, async (req, res) => {
+  const { orderId } = req.params;
+  const { status } = req.body;
+
+  if (!status) {
+    return res.status(400).json({ error: "status is required" });
+  }
+
+  const { data, error } = await supabase.from("orders").update({ status }).eq("order_id", orderId).select().single();
+  if (error) return res.status(500).json({ error: error.message });
+  res.json(data);
+});
+
+app.delete("/api/admin/orders/:orderId", requireAuth, requireAdmin, async (req, res) => {
+  const { orderId } = req.params;
+
+  try {
+    const { error: paymentsError } = await supabase.from("payments").delete().eq("order_id", orderId);
+    if (paymentsError) throw paymentsError;
+
+    const { error: itemsError } = await supabase.from("order_items").delete().eq("order_id", orderId);
+    if (itemsError) throw itemsError;
+
+    const { data, error } = await supabase.from("orders").delete().eq("order_id", orderId).select().maybeSingle();
+    if (error) throw error;
+
+    res.json({ deleted: data });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post("/api/admin/users/role", requireAuth, requireAdmin, async (req, res) => {
+  const { user_id, email, role } = req.body || {};
+  const allowedRoles = new Set(["admin", "staff", "customer"]);
+
+  if (!role || !allowedRoles.has(role)) {
+    return res.status(400).json({ error: "role must be admin, staff, or customer" });
+  }
+
+  let userId = user_id;
+  if (!userId && email) {
+    const { data, error } = await supabase.auth.admin.getUserByEmail(email);
+    if (error || !data?.user?.id) {
+      return res.status(404).json({ error: "user not found for email" });
+    }
+    userId = data.user.id;
+  }
+
+  if (!userId) {
+    return res.status(400).json({ error: "user_id or email is required" });
+  }
+
+  const { data, error } = await supabase
+    .from("user_roles")
+    .upsert({ user_id: userId, role })
+    .select()
+    .single();
+
+  if (error) return res.status(500).json({ error: error.message });
+
+  res.json({ user_id: userId, role, data });
 });
 
 app.post("/api/orders", requireAuth, async (req, res) => {

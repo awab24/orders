@@ -1,0 +1,13 @@
+﻿Procedures report for restaurantapp (Q&A examples)
+
+Q1: Mark reservations as overdue if they are before a specific time.
+SQL:
+call public.proc_mark_overdue_reservations('2025-01-01 00:00:00+00');
+
+Q2: Void unpaid orders before a cutoff date/time.
+SQL:
+call public.proc_void_unpaid_orders('2025-01-01 00:00:00+00');
+
+Q3: Increase all menu item prices by 5 percent.
+SQL:
+call public.proc_bulk_update_menu_prices(5);

@@ -10,6 +10,7 @@ import Auth from "./pages/Auth/Auth";
 import RequireAuth from "./components/RequireAuth";
 import RequireAdmin from "./components/RequireAdmin";
 import AddMenuItem from "./pages/Admin/AddMenuItem/AddMenuItem";
+import AdminDashboard from "./pages/Admin/AdminDashboard/AdminDashboard";
 
 function App() {
   return (
@@ -28,6 +29,14 @@ function App() {
           }
         />
         <Route path="/auth" element={<Auth />} />
+        <Route
+          path="/admin"
+          element={
+            <RequireAdmin>
+              <AdminDashboard />
+            </RequireAdmin>
+          }
+        />
         <Route
           path="/admin/menu-items/new"
           element={
