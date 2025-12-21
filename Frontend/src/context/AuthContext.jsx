@@ -7,6 +7,8 @@ export const AuthProvider = ({ children }) => {
   const [session, setSession] = useState(null);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [role, setRole] = useState(null);
+  const [roleLoading, setRoleLoading] = useState(true);
 
   useEffect(() => {
     let active = true;
@@ -38,6 +40,39 @@ export const AuthProvider = ({ children }) => {
     };
   }, []);
 
+  useEffect(() => {
+    let active = true;
+
+    const loadRole = async () => {
+      if (!user) {
+        setRole(null);
+        setRoleLoading(false);
+        return;
+      }
+
+      setRoleLoading(true);
+      const { data, error } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user.id)
+        .single();
+
+      if (!active) return;
+      if (error) {
+        setRole(null);
+      } else {
+        setRole(data?.role || null);
+      }
+      setRoleLoading(false);
+    };
+
+    loadRole();
+
+    return () => {
+      active = false;
+    };
+  }, [user]);
+
   const signIn = async ({ email, password }) => {
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) throw error;
@@ -56,8 +91,17 @@ export const AuthProvider = ({ children }) => {
   };
 
   const value = useMemo(
-    () => ({ session, user, loading, signIn, signUp, signOut }),
-    [session, user, loading]
+    () => ({
+      session,
+      user,
+      loading,
+      role,
+      roleLoading,
+      signIn,
+      signUp,
+      signOut,
+    }),
+    [session, user, loading, role, roleLoading]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

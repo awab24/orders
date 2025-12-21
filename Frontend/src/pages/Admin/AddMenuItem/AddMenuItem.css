@@ -1,0 +1,51 @@
+.add-menu-item {
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.add-menu-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.add-menu-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 14px;
+  color: #374151;
+}
+
+.add-menu-form input,
+.add-menu-form textarea {
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-size: 14px;
+}
+
+.add-menu-form button {
+  align-self: flex-start;
+  border: none;
+  background: tomato;
+  color: #fff;
+  padding: 10px 24px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.add-menu-form button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.form-message {
+  font-size: 14px;
+  color: #6b7280;
+}

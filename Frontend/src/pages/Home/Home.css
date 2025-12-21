@@ -1,5 +1,25 @@
- .home {
+.home {
   display: flex;
   flex-direction: column;
   gap: 24px;
+}
+
+.admin-add-button {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: tomato;
+  color: #fff;
+  font-size: 32px;
+  display: grid;
+  place-items: center;
+  text-decoration: none;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+.admin-add-button:hover {
+  background: #e64a2e;
 }

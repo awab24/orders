@@ -8,6 +8,8 @@ import Cart from "./pages/Cart/Cart";
 import PlaceOrder from "./pages/PlaceOrder/PlaceOrder";
 import Auth from "./pages/Auth/Auth";
 import RequireAuth from "./components/RequireAuth";
+import RequireAdmin from "./components/RequireAdmin";
+import AddMenuItem from "./pages/Admin/AddMenuItem/AddMenuItem";
 
 function App() {
   return (
@@ -26,6 +28,14 @@ function App() {
           }
         />
         <Route path="/auth" element={<Auth />} />
+        <Route
+          path="/admin/menu-items/new"
+          element={
+            <RequireAdmin>
+              <AddMenuItem />
+            </RequireAdmin>
+          }
+        />
       </Routes>
 
       <Footer />
